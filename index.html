@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розклад уроків</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .current-lesson {
+            background-color: #d1e7dd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Розклад уроків</h1>
+    <table id="schedule">
+        <thead>
+            <tr>
+                <th>День</th>
+                <th>№</th>
+                <th>Урокі (Даніїл)</th>
+                <th>Урокі (Марк)</th>
+                <th>Час проведення уроку</th>
+                <th>Перерва</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Понеділок -->
+            <tr>
+                <td rowspan="8">Понеділок</td>
+                <td>1</td>
+                <td>Навчання грамоти</td>
+                <td>Читання</td>
+                <td>9:00 - 9:45</td>
+                <td>9:45 - 9:55 (10 хв)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Навчання грамоти</td>
+                <td>Математика</td>
+                <td>9:55 - 10:40</td>
+                <td>10:40 - 10:50 (10 хв)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Математика</td>
+                <td>Jezyk Polski</td>
+                <td>10:50 - 11:35</td>
+                <td>11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Англійська мова</td>
+                <td>Українська мова</td>
+                <td>11:55 - 12:40</td>
+                <td>12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Ударні</td>
+                <td>Англійська мова</td>
+                <td>13:00 - 13:45</td>
+                <td>13:45 - 13:55 (10 хв)</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Теорія музики</td>
+                <td>Теорія музики</td>
+                <td>13:55 - 14:40</td>
+                <td>14:40 - 14:50 (10 хв)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Театр</td>
+                <td>Театр</td>
+                <td>14:50 - 15:35</td>
+                <td>15:35 - 15:45 (10 хв)</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Театр ансамбль</td>
+                <td>Театр ансамбль</td>
+                <td>15:45 - 16:30</td>
+                <td></td>
+            </tr>
+            <!-- Додайте інші дні за аналогією -->
+        </tbody>
+    </table>
+
+    <h2>Поточні уроки</h2>
+    <p id="current-lesson-daniel">Даніїл: </p>
+    <p id="current-lesson-mark">Марк: </p>
+
+    <script>
+        const schedule = [
+            // Понеділок
+            { day: 'Понеділок', number: 1, daniel: 'Навчання грамоти', mark: 'Читання', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+            { day: 'Понеділок', number: 2, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+            { day: 'Понеділок', number: 3, daniel: 'Математика', mark: 'Jezyk Polski', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+            { day: 'Понеділок', number: 4, daniel: 'Англійська мова', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+            { day: 'Понеділок', number: 5, daniel: 'Ударні', mark: 'Англійська мова', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+            { day: 'Понеділок', number: 6, daniel: 'Теорія музики', mark: 'Теорія музики', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
+            { day: 'Понеділок', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
+            { day: 'Понеділок', number: 8, daniel: 'Театр ансамбль', mark: 'Театр ансамбль', time: '15:45 - 16:30', break: '' },
+            // Додайте інші дні та уроки за аналогією
+        ];
+
+        function getCurrentLesson() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+
+            let danielLesson = 'Немає уроку';
+            let markLesson = 'Немає уроку';
+
+            schedule.forEach(lesson => {
+                const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
+                const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
+                const startTime = startHour * 60 + startMinute;
+                const endTime = endHour * 60 + endMinute;
+
+                if (currentTime >= startTime && currentTime <= endTime) {
+                    danielLesson = lesson.daniel;
+                    markLesson = lesson.mark;
+                }
+            });
+
+            document.getElementById('current-lesson-daniel').textContent = `Даніїл: ${danielLesson}`;
+            document.getElementById('current-lesson-mark').textContent = `Марк: ${markLesson}`;
+        }
+
+        setInterval(getCurrentLesson, 60000); // Оновлювати кожну хвилину
+        getCurrentLesson(); // Викликати одразу при завантаженні сторінки
+    </script>
+</body>
+</html>
