@@ -398,11 +398,27 @@
                 const startTime = startHour * 60 + startMinute;
                 const endTime = endHour * 60 + endMinute;
 
+                // Перевіряємо, чи поточний час потрапляє в інтервал уроку
                 if (currentTime >= startTime && currentTime <= endTime) {
                     danielLesson = lesson.daniel;
                     markLesson = lesson.mark;
                     danielTime = lesson.time;
                     markTime = lesson.time;
+                }
+
+                // Перевіряємо, чи поточний час потрапляє в інтервал перерви або обіду
+                if (lesson.break) {
+                    const [breakStartHour, breakStartMinute] = lesson.break.split(' - ')[0].split(':').map(Number);
+                    const [breakEndHour, breakEndMinute] = lesson.break.split(' - ')[1].split(':').map(Number);
+                    const breakStartTime = breakStartHour * 60 + breakStartMinute;
+                    const breakEndTime = breakEndHour * 60 + breakEndMinute;
+
+                    if (currentTime >= breakStartTime && currentTime <= breakEndTime) {
+                        danielLesson = 'Перерва';
+                        markLesson = 'Перерва';
+                        danielTime = lesson.break;
+                        markTime = lesson.break;
+                    }
                 }
             }
         });
