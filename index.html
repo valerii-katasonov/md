@@ -383,6 +383,8 @@
     function getCurrentLesson() {
         const now = new Date();
         const currentTime = now.getHours() * 60 + now.getMinutes();
+        const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+        const currentDay = days[now.getDay()]; // Отримуємо поточний день тижня
 
         let danielLesson = 'Немає уроку';
         let markLesson = 'Немає уроку';
@@ -390,16 +392,18 @@
         let markTime = '';
 
         schedule.forEach(lesson => {
-            const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
-            const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
-            const startTime = startHour * 60 + startMinute;
-            const endTime = endHour * 60 + endMinute;
+            if (lesson.day === currentDay) { // Перевіряємо лише уроки для поточного дня
+                const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
+                const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
+                const startTime = startHour * 60 + startMinute;
+                const endTime = endHour * 60 + endMinute;
 
-            if (currentTime >= startTime && currentTime <= endTime) {
-                danielLesson = lesson.daniel;
-                markLesson = lesson.mark;
-                danielTime = lesson.time;
-                markTime = lesson.time;
+                if (currentTime >= startTime && currentTime <= endTime) {
+                    danielLesson = lesson.daniel;
+                    markLesson = lesson.mark;
+                    danielTime = lesson.time;
+                    markTime = lesson.time;
+                }
             }
         });
 
