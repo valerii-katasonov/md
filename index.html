@@ -27,6 +27,10 @@
     </style>
 </head>
 <body>
+    <h2>Поточні уроки</h2>
+    <p id="current-lesson-daniel">Даніїл: </p>
+    <p id="current-lesson-mark">Марк: </p>
+
     <h1>Розклад уроків</h1>
     <table id="schedule">
         <thead>
@@ -102,9 +106,7 @@
         </tbody>
     </table>
 
-    <h2>Поточні уроки</h2>
-    <p id="current-lesson-daniel">Даніїл: </p>
-    <p id="current-lesson-mark">Марк: </p>
+
 
     <script>
         const schedule = [
@@ -139,7 +141,7 @@
                 }
             });
 
-            document.getElementById('current-lesson-daniel').textContent = `Даніїл: ${danielLesson}`;
+            document.getElementById('current-lesson-daniel').textContent = `Данііл: ${danielLesson}`;
             document.getElementById('current-lesson-mark').textContent = `Марк: ${markLesson}`;
         }
 
