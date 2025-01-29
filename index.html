@@ -332,7 +332,7 @@
 
 
 
-   <script>
+  <script>
     const schedule = [
         // Понеділок
         { day: 'Понеділок', number: 1, daniel: 'Навчання грамоти', mark: 'Читання', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
@@ -386,6 +386,8 @@
 
         let danielLesson = 'Немає уроку';
         let markLesson = 'Немає уроку';
+        let danielTime = '';
+        let markTime = '';
 
         schedule.forEach(lesson => {
             const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
@@ -396,11 +398,13 @@
             if (currentTime >= startTime && currentTime <= endTime) {
                 danielLesson = lesson.daniel;
                 markLesson = lesson.mark;
+                danielTime = lesson.time;
+                markTime = lesson.time;
             }
         });
 
-        document.getElementById('current-lesson-daniel').textContent = `Даніїл: ${danielLesson}`;
-        document.getElementById('current-lesson-mark').textContent = `Марк: ${markLesson}`;
+        document.getElementById('current-lesson-daniel').textContent = `Даніїл: ${danielLesson} (${danielTime})`;
+        document.getElementById('current-lesson-mark').textContent = `Марк: ${markLesson} (${markTime})`;
     }
 
     setInterval(getCurrentLesson, 60000); // Оновлювати кожну хвилину
