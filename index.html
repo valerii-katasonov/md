@@ -101,6 +101,59 @@
             color: #777;
             text-align: center;
         }
+
+        /* Стили для выделения дней недели */
+        .day-header {
+            background-color: #3498db !important;
+            color: white !important;
+        }
+
+        .day-header td {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Стили для сегодняшнего расписания */
+        .today-schedule {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .today-schedule h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .today-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .today-table th, .today-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .today-table th {
+            background-color: #2c3e50;
+            color: #ffffff;
+        }
+
+        .today-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .highlight {
+            background-color: #fffacd !important;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -110,6 +163,25 @@
         <h2>Поточні уроки</h2>
         <p id="current-lesson-daniel">Данііл: </p>
         <p id="current-lesson-mark">Марк: </p>
+    </div>
+
+    <!-- Блок с расписанием на сегодня -->
+    <div class="today-schedule">
+        <h2 id="today-title">Розклад на сьогодні</h2>
+        <table class="today-table" id="today-schedule">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Урокі (Данііл)</th>
+                    <th>Урокі (Марк)</th>
+                    <th>Час проведення уроку</th>
+                    <th>Перерва</th>
+                </tr>
+            </thead>
+            <tbody id="today-lessons">
+                <!-- Здесь будет динамически добавляться расписание на сегодня -->
+            </tbody>
+        </table>
     </div>
 
     <table id="schedule">
@@ -125,7 +197,7 @@
         </thead>
         <tbody>
             <!-- Понеділок -->
-            <tr>
+            <tr class="day-header">
                 <td rowspan="9">Понеділок</td>
                 <td>1</td>
                 <td>Навчання грамоти</td>
@@ -190,7 +262,7 @@
                 <td></td>
             </tr>
             <!-- Вівторок -->
-            <tr>
+            <tr class="day-header">
                 <td rowspan="7">Вівторок</td>
                 <td>1</td>
                 <td>Навчання грамоти</td>
@@ -241,7 +313,7 @@
                 <td class="break">15:35 - 15:45 (10 хв)</td>
             </tr>
             <!-- Середа -->
-            <tr>
+            <tr class="day-header">
                 <td rowspan="9">Середа</td>
                 <td>1</td>
                 <td>Навчання грамоти</td>
@@ -306,7 +378,7 @@
                 <td></td>
             </tr>
             <!-- Четвер -->
-            <tr>
+            <tr class="day-header">
                 <td rowspan="7">Четвер</td>
                 <td>1</td>
                 <td>Навчання грамоти</td>
@@ -357,7 +429,7 @@
                 <td class="break">15:35 - 15:45 (10 хв)</td>
             </tr>
             <!-- П'ятниця -->
-            <tr>
+            <tr class="day-header">
                 <td rowspan="7">П'ятниця</td>
                 <td>1</td>
                 <td>Я досліджую світ</td>
@@ -414,105 +486,145 @@
         <p>Розклад уроків для Данііла та Марка</p>
     </div>
 
+    <script>
+        const schedule = [
+            // Понеділок
+            { day: 'Понеділок', number: 1, daniel: 'Навчання грамоти', mark: 'Читання', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+            { day: 'Понеділок', number: 2, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+            { day: 'Понеділок', number: 3, daniel: 'Математика', mark: 'Jezyk Polski', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+            { day: 'Понеділок', number: 4, daniel: 'Англійська мова', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+            { day: 'Понеділок', number: 5, daniel: 'Ударні', mark: 'Англійська мова', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+            { day: 'Понеділок', number: 6, daniel: 'Теорія музики', mark: 'Теорія музики', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
+            { day: 'Понеділок', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
+            { day: 'Понеділок', number: 8, daniel: 'Театр ансамбль', mark: 'Театр ансамбль', time: '15:45 - 16:30', break: '' },
+            { day: 'Понеділок', number: 9, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
+            // Вівторок
+            { day: 'Вівторок', number: 1, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+            { day: 'Вівторок', number: 2, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+            { day: 'Вівторок', number: 3, daniel: 'Математика', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+            { day: 'Вівторок', number: 4, daniel: 'Przyroda', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+            { day: 'Вівторок', number: 5, daniel: 'Plastyka', mark: 'Plastyka', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+            { day: 'Вівторок', number: 6, daniel: 'Українська світлиця', mark: 'Я досліджую світ', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
+            { day: 'Вівторок', number: 7, daniel: '', mark: 'Гітара', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
+            // Середа
+            { day: 'Середа', number: 1, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+            { day: 'Середа', number: 2, daniel: 'Математика', mark: 'Jezyk Polski', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+            { day: 'Середа', number: 3, daniel: 'Jezyk Polski', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+            { day: 'Середа', number: 4, daniel: 'Англійська мова', mark: 'Інформатика', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+            { day: 'Середа', number: 5, daniel: 'Англійська мова', mark: 'Читання', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+            { day: 'Середа', number: 6, daniel: 'Ударні', mark: '', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
+            { day: 'Середа', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
+            { day: 'Середа', number: 8, daniel: 'Театр', mark: 'Театр', time: '15:45 - 16:30', break: '' },
+            { day: 'Середа', number: 9, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
+            // Четвер
+            { day: 'Четвер', number: 1, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+            { day: 'Четвер', number: 2, daniel: 'Навчання грамоти', mark: 'Jezyk Polski', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+            { day: 'Четвер', number: 3, daniel: 'Jezyk Polski', mark: 'Українська мова', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+            { day: 'Четвер', number: 4, daniel: 'Математика', mark: 'Я досліджую світ', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+            { day: 'Четвер', number: 5, daniel: 'Plastyka', mark: 'Edukacja wczesnoszkolna', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+            { day: 'Четвер', number: 6, daniel: 'Англійська мова', mark: 'Польська мова (факультатив)', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
+            { day: 'Четвер', number: 7, daniel: '', mark: 'Гітара', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
+            // П'ятниця
+            { day: 'П\'ятниця', number: 1, daniel: 'Я досліджую світ', mark: 'Українська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+            { day: 'П\'ятниця', number: 2, daniel: 'Jezyk Polski', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+            { day: 'П\'ятниця', number: 3, daniel: 'Edukacja wczesnoszkolna', mark: 'Читання', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+            { day: 'П\'ятниця', number: 4, daniel: 'Очікування автобусу', mark: 'Очікування автобусу', time: '11:55 - 12:20', break: '' },
+            { day: 'П\'ятниця', number: 5, daniel: 'Wyhowanie фізичне (басейн)', mark: 'Wyhowanie фізичне (басейн)', time: '13:00 - 14:00', break: '' },
+            { day: 'П\'ятниця', number: 6, daniel: 'Шлях з басейну до школи на автобусі', mark: 'Шлях з басейну до школи на автобусі', time: '14:30 - 14:55', break: '' },
+            { day: 'П\'ятниця', number: 7, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' }
+        ];
 
+        function getCurrentLesson() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+            const currentDay = days[now.getDay()]; // Отримуємо поточний день тижня
 
-  <script>
-    const schedule = [
-        // Понеділок
-        { day: 'Понеділок', number: 1, daniel: 'Навчання грамоти', mark: 'Читання', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-        { day: 'Понеділок', number: 2, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-        { day: 'Понеділок', number: 3, daniel: 'Математика', mark: 'Jezyk Polski', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-        { day: 'Понеділок', number: 4, daniel: 'Англійська мова', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-        { day: 'Понеділок', number: 5, daniel: 'Ударні', mark: 'Англійська мова', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-        { day: 'Понеділок', number: 6, daniel: 'Теорія музики', mark: 'Теорія музики', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-        { day: 'Понеділок', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-        { day: 'Понеділок', number: 8, daniel: 'Театр ансамбль', mark: 'Театр ансамбль', time: '15:45 - 16:30', break: '' },
-        { day: 'Понеділок', number: 9, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
-        // Вівторок
-        { day: 'Вівторок', number: 1, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-        { day: 'Вівторок', number: 2, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-        { day: 'Вівторок', number: 3, daniel: 'Математика', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-        { day: 'Вівторок', number: 4, daniel: 'Przyroda', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-        { day: 'Вівторок', number: 5, daniel: 'Plastyka', mark: 'Plastyka', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-        { day: 'Вівторок', number: 6, daniel: 'Українська світлиця', mark: 'Я досліджую світ', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-        { day: 'Вівторок', number: 7, daniel: '', mark: 'Гітара', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-        // Середа
-        { day: 'Середа', number: 1, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-        { day: 'Середа', number: 2, daniel: 'Математика', mark: 'Jezyk Polski', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-        { day: 'Середа', number: 3, daniel: 'Jezyk Polski', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-        { day: 'Середа', number: 4, daniel: 'Англійська мова', mark: 'Інформатика', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-        { day: 'Середа', number: 5, daniel: 'Англійська мова', mark: 'Читання', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-        { day: 'Середа', number: 6, daniel: 'Ударні', mark: '', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-        { day: 'Середа', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-        { day: 'Середа', number: 8, daniel: 'Театр', mark: 'Театр', time: '15:45 - 16:30', break: '' },
-        { day: 'Середа', number: 9, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
-        // Четвер
-        { day: 'Четвер', number: 1, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-        { day: 'Четвер', number: 2, daniel: 'Навчання грамоти', mark: 'Jezyk Polski', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-        { day: 'Четвер', number: 3, daniel: 'Jezyk Polski', mark: 'Українська мова', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-        { day: 'Четвер', number: 4, daniel: 'Математика', mark: 'Я досліджую світ', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-        { day: 'Четвер', number: 5, daniel: 'Plastyka', mark: 'Edukacja wczesnoszkolna', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-        { day: 'Четвер', number: 6, daniel: 'Англійська мова', mark: 'Польська мова (факультатив)', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-        { day: 'Четвер', number: 7, daniel: '', mark: 'Гітара', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-        // П'ятниця
-        { day: 'П\'ятниця', number: 1, daniel: 'Я досліджую світ', mark: 'Українська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-        { day: 'П\'ятниця', number: 2, daniel: 'Jezyk Polski', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-        { day: 'П\'ятниця', number: 3, daniel: 'Edukacja wczesnoszkolna', mark: 'Читання', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-        { day: 'П\'ятниця', number: 4, daniel: 'Очікування автобусу', mark: 'Очікування автобусу', time: '11:55 - 12:20', break: '' },
-        { day: 'П\'ятниця', number: 5, daniel: 'Wyhowanie фізичне (басейн)', mark: 'Wyhowanie фізичне (басейн)', time: '13:00 - 14:00', break: '' },
-        { day: 'П\'ятниця', number: 6, daniel: 'Шлях з басейну до школи на автобусі', mark: 'Шлях з басейну до школи на автобусі', time: '14:30 - 14:55', break: '' },
-        { day: 'П\'ятниця', number: 7, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' }
-    ];
+            let danielLesson = 'Немає уроку';
+            let markLesson = 'Немає уроку';
+            let danielTime = '';
+            let markTime = '';
 
-    function getCurrentLesson() {
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes();
-        const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
-        const currentDay = days[now.getDay()]; // Отримуємо поточний день тижня
+            // Оновлюємо заголовок для сьогоднішнього розкладу
+            document.getElementById('today-title').textContent = `Розклад на ${currentDay}`;
 
-        let danielLesson = 'Немає уроку';
-        let markLesson = 'Немає уроку';
-        let danielTime = '';
-        let markTime = '';
+            // Очищаємо таблицю сьогоднішнього розкладу
+            const todayLessons = document.getElementById('today-lessons');
+            todayLessons.innerHTML = '';
 
-        schedule.forEach(lesson => {
-            if (lesson.day === currentDay) { // Перевіряємо лише уроки для поточного дня
-                const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
-                const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
-                const startTime = startHour * 60 + startMinute;
-                const endTime = endHour * 60 + endMinute;
+            // Заповнюємо таблицю сьогоднішнього розкладу
+            schedule.forEach(lesson => {
+                if (lesson.day === currentDay) {
+                    const row = document.createElement('tr');
+                    
+                    // Визначаємо, чи це поточний урок
+                    const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
+                    const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
+                    const startTime = startHour * 60 + startMinute;
+                    const endTime = endHour * 60 + endMinute;
+                    const isCurrent = currentTime >= startTime && currentTime <= endTime;
+                    
+                    row.innerHTML = `
+                        <td${isCurrent ? ' class="highlight"' : ''}>${lesson.number}</td>
+                        <td${isCurrent ? ' class="highlight"' : ''}>${lesson.daniel || '-'}</td>
+                        <td${isCurrent ? ' class="highlight"' : ''}>${lesson.mark || '-'}</td>
+                        <td${isCurrent ? ' class="highlight"' : ''}>${lesson.time}</td>
+                        <td${lesson.break ? ' class="break"' : ''}>${lesson.break || '-'}</td>
+                    `;
+                    todayLessons.appendChild(row);
 
-                // Перевіряємо, чи поточний час потрапляє в інтервал уроку
-                if (currentTime >= startTime && currentTime <= endTime) {
-                    danielLesson = lesson.daniel;
-                    markLesson = lesson.mark;
-                    danielTime = lesson.time;
-                    markTime = lesson.time;
-                }
+                    // Перевіряємо, чи поточний час потрапляє в інтервал уроку
+                    if (isCurrent) {
+                        danielLesson = lesson.daniel;
+                        markLesson = lesson.mark;
+                        danielTime = lesson.time;
+                        markTime = lesson.time;
+                    }
 
-                // Перевіряємо, чи поточний час потрапляє в інтервал перерви або обіду
-                if (lesson.break) {
-                    const [breakStartHour, breakStartMinute] = lesson.break.split(' - ')[0].split(':').map(Number);
-                    const [breakEndHour, breakEndMinute] = lesson.break.split(' - ')[1].split(':').map(Number);
-                    const breakStartTime = breakStartHour * 60 + breakStartMinute;
-                    const breakEndTime = breakEndHour * 60 + breakEndMinute;
+                    // Перевіряємо, чи поточний час потрапляє в інтервал перерви або обіду
+                    if (lesson.break) {
+                        const [breakStartHour, breakStartMinute] = lesson.break.split(' - ')[0].split(':').map(Number);
+                        const [breakEndHour, breakEndMinute] = lesson.break.split(' - ')[1].split(':').map(Number);
+                        const breakStartTime = breakStartHour * 60 + breakStartMinute;
+                        const breakEndTime = breakEndHour * 60 + breakEndMinute;
 
-                    if (currentTime >= breakStartTime && currentTime <= breakEndTime) {
-                        danielLesson = 'Перерва';
-                        markLesson = 'Перерва';
-                        danielTime = lesson.break;
-                        markTime = lesson.break;
+                        if (currentTime >= breakStartTime && currentTime <= breakEndTime) {
+                            danielLesson = 'Перерва';
+                            markLesson = 'Перерва';
+                            danielTime = lesson.break;
+                            markTime = lesson.break;
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        document.getElementById('current-lesson-daniel').textContent = `Данііл: ${danielLesson} (${danielTime})`;
-        document.getElementById('current-lesson-mark').textContent = `Марк: ${markLesson} (${markTime})`;
-    }
+            document.getElementById('current-lesson-daniel').textContent = `Данііл: ${danielLesson} (${danielTime})`;
+            document.getElementById('current-lesson-mark').textContent = `Марк: ${markLesson} (${markTime})`;
+        }
 
-    setInterval(getCurrentLesson, 60000); // Оновлювати кожну хвилину
-    getCurrentLesson(); // Викликати одразу при завантаженні сторінки
-</script>
+        // Підсвічуємо поточний день у головній таблиці
+        function highlightCurrentDay() {
+            const now = new Date();
+            const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+            const currentDay = days[now.getDay()];
+            
+            // Видаляємо попереднє виділення
+            document.querySelectorAll('.day-header').forEach(header => {
+                header.style.backgroundColor = '#3498db';
+            });
+            
+            // Додаємо виділення для поточного дня
+            const dayHeaders = document.querySelectorAll('.day-header');
+            dayHeaders.forEach(header => {
+                if (header.querySelector('td').textContent === currentDay) {
+                    header.style.backgroundColor = '#e74c3c';
+                }
+            });
+        }
+
+        setInterval(getCurrentLesson, 60000); // Оновлювати кожну хвилину
+        getCurrentLesson(); // Викликати одразу при завантаженні сторінки
+        highlightCurrentDay(); // Виділити поточний день
+    </script>
 </body>
 </html>
