@@ -1,758 +1,668 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Розклад уроків</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
+<!DOCTYPE html> 
+<html lang="uk"> 
+<head> 
+<meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>Розклад уроків</title> 
+<style> 
+body { 
+  font-family: 'Arial', sans-serif; 
+  background-color: #f4f4f9; 
+  color: #333; 
+  margin: 0; 
+  padding: 20px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  min-height: 100vh; 
+  box-sizing: border-box; 
+} 
+h1, h2 { 
+  color: #2c3e50; 
+  margin-bottom: 20px; 
+} 
+h1 { 
+  font-size: 2.2rem; 
+  text-align: center; 
+  margin-top: 0; 
+} 
+h2 { 
+  font-size: 1.6rem; 
+  margin-top: 25px; 
+} 
+.current-lessons { 
+  background-color: #ffffff; 
+  padding: 20px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  margin-bottom: 25px; 
+  width: 90%; 
+  max-width: 600px; 
+  text-align: center; 
+} 
+.current-lessons p { 
+  font-size: 1.1rem; 
+  margin: 12px 0; 
+  color: #555; 
+  padding: 8px; 
+  border-radius: 5px; 
+} 
+.current-lesson-active { 
+  background-color: #e8f5e9; 
+  font-weight: bold; 
+} 
+.current-break-active { 
+  background-color: #fff3e0; 
+  font-weight: bold; 
+} 
+table { 
+  width: 95%; 
+  max-width: 1000px; 
+  border-collapse: collapse; 
+  margin: 20px 0; 
+  background-color: #ffffff; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+} 
+th, td { 
+  padding: 12px 10px; 
+  text-align: center; 
+  border-bottom: 1px solid #ddd; 
+} 
+th { 
+  background-color: #2c3e50; 
+  color: #ffffff; 
+  font-weight: bold; 
+  position: sticky; 
+  top: 0; 
+} 
+tr:nth-child(even) { 
+  background-color: #f9f9f9; 
+} 
+tr:hover { 
+  background-color: #f1f1f1; 
+} 
+.break { 
+  background-color: #e8f5e9; 
+  color: #2e7d32; 
+} 
+.lunch { 
+  background-color: #fff3e0; 
+  color: #e65100; 
+} 
+.no-lesson { 
+  background-color: #ffebee; 
+  color: #c62828; 
+} 
+.footer { 
+  margin: 30px 0 15px; 
+  font-size: 0.9rem; 
+  color: #777; 
+  text-align: center; 
+  width: 100%; 
+} 
+/* Стили для дней недели */ 
+.day-header.monday { 
+  background-color: #3498db !important; 
+  color: white !important; 
+} 
+.day-header.tuesday { 
+  background-color: #9b59b6 !important; 
+  color: white !important; 
+} 
+.day-header.wednesday { 
+  background-color: #2ecc71 !important; 
+  color: white !important; 
+} 
+.day-header.thursday { 
+  background-color: #e67e22 !important; 
+  color: white !important; 
+} 
+.day-header.friday { 
+  background-color: #e74c3c !important; 
+  color: white !important; 
+} 
+.day-header td { 
+  font-weight: bold; 
+  font-size: 1.1em; 
+} 
+/* Стили для сегодняшнего расписания */ 
+.today-schedule { 
+  background-color: #ffffff; 
+  padding: 20px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  margin-bottom: 25px; 
+  width: 90%; 
+  max-width: 800px; 
+} 
+.today-schedule h2 { 
+  color: #2c3e50; 
+  text-align: center; 
+  margin-bottom: 20px; 
+} 
+.today-table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  margin-top: 10px; 
+} 
+.today-table th, .today-table td { 
+  padding: 10px 8px; 
+  text-align: center; 
+  border: 1px solid #ddd; 
+} 
+.today-table th { 
+  background-color: #2c3e50; 
+  color: #ffffff; 
+} 
+.today-table tr:nth-child(even) { 
+  background-color: #f9f9f9; 
+} 
+.highlight { 
+  background-color: #fffacd !important; 
+  font-weight: bold; 
+} 
+.current-break { 
+  background-color: #e8f5e9 !important; 
+  font-weight: bold; 
+  color: #2e7d32; 
+} 
+/* Адаптивность */ 
+@media (max-width: 768px) { 
+  h1 { 
+    font-size: 1.8rem; 
+  } 
+  h2 { 
+    font-size: 1.4rem; 
+  } 
+  th, td { 
+    padding: 8px 6px; 
+    font-size: 0.9rem; 
+  } 
+  .current-lessons p { 
+    font-size: 1rem; 
+  } 
+} 
+@media (max-width: 480px) { 
+  body { 
+    padding: 15px 10px; 
+  } 
+  h1 { 
+    font-size: 1.6rem; 
+  } 
+  .current-lessons, .today-schedule { 
+    width: 95%; 
+    padding: 15px; 
+  } 
+  th, td { 
+    padding: 6px 4px; 
+    font-size: 0.85rem; 
+  } 
+  .day-header td { 
+    font-size: 1em; 
+  } 
+} 
+</style> 
+</head> 
+<body> 
+<h1>Розклад уроків</h1> 
+<div class="current-lessons"> 
+  <h2>Поточні уроки</h2> 
+  <p id="current-lesson-daniel">Данііл: </p> 
+  <p id="current-lesson-mark">Марк: </p> 
+</div> 
 
-        h1, h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
+<!-- Блок с расписанием на сегодня --> 
+<div class="today-schedule"> 
+  <h2 id="today-title">Розклад на сьогодні</h2> 
+  <table class="today-table" id="today-schedule"> 
+    <thead> 
+      <tr> 
+        <th>№</th> 
+        <th>Урокі (Данііл)</th> 
+        <th>Урокі (Марк)</th> 
+        <th>Час</th> 
+        <th>Перерва</th> 
+      </tr> 
+    </thead> 
+    <tbody id="today-lessons"> 
+      <!-- Здесь будет динамически добавляться расписание на сегодня --> 
+    </tbody> 
+  </table> 
+</div> 
 
-        h1 {
-            font-size: 2.2rem;
-            text-align: center;
-            margin-top: 0;
-        }
+<table id="schedule"> 
+  <thead> 
+    <tr> 
+      <th>День</th> 
+      <th>№</th> 
+      <th>Урокі (Данііл)</th> 
+      <th>Урокі (Марк)</th> 
+      <th>Час</th> 
+      <th>Перерва</th> 
+    </tr> 
+  </thead> 
+  <tbody> 
+    <!-- Понеділок --> 
+    <tr class="day-header monday"> 
+      <td rowspan="11">Понеділок</td> 
+      <td>1</td> 
+      <td>Англійська мова</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>9:00 - 9:45</td> 
+      <td class="break">9:45 - 9:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>2</td> 
+      <td>Інформатика</td> 
+      <td>Математика</td> 
+      <td>9:55 - 10:40</td> 
+      <td class="break">10:40 - 10:50 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>3</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>Інформатика</td> 
+      <td>10:50 - 11:35</td> 
+      <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>4</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>Англійська мова</td> 
+      <td>11:55 - 12:40</td> 
+      <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>5</td> 
+      <td>Читання</td> 
+      <td>Українська мова</td> 
+      <td>13:00 - 13:45</td> 
+      <td class="break">13:45 - 13:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>6</td> 
+      <td>Фізичне виховання/Музика</td> 
+      <td></td> 
+      <td>13:55 - 14:40</td> 
+      <td class="break">14:40 - 14:50 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>7</td> 
+      <td></td> 
+      <td></td> 
+      <td>14:50 - 15:30</td> 
+      <td class="break">15:30 - 15:40 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>8</td> 
+      <td>Тхэквандо</td> 
+      <td>Тхэквандо</td> 
+      <td>17:00 - 18:00</td> 
+      <td></td> 
+    </tr> 
 
-        h2 {
-            font-size: 1.6rem;
-            margin-top: 25px;
-        }
+    <!-- Вівторок --> 
+    <tr class="day-header tuesday"> 
+      <td rowspan="11">Вівторок</td> 
+      <td>1</td> 
+      <td>Читання</td> 
+      <td>Українська мова</td> 
+      <td>9:00 - 9:45</td> 
+      <td class="break">9:45 - 9:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>2</td> 
+      <td>Англійська мова</td> 
+      <td>Математика</td> 
+      <td>9:55 - 10:40</td> 
+      <td class="break">10:40 - 10:50 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>3</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>Англійська мова</td> 
+      <td>10:50 - 11:35</td> 
+      <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>4</td> 
+      <td>Математика</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>11:55 - 12:40</td> 
+      <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>5</td> 
+      <td>Українська мова</td> 
+      <td>Plastyka/Tehnika</td> 
+      <td>13:00 - 13:45</td> 
+      <td class="break">13:45 - 13:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>6</td> 
+      <td>Plastyka</td> 
+      <td>Przyroda</td> 
+      <td>13:55 - 14:40</td> 
+      <td></td> 
+    </tr> 
 
-        .current-lessons {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 25px;
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-        }
+    <!-- Середа --> 
+    <tr class="day-header wednesday"> 
+      <td rowspan="11">Середа</td> 
+      <td>1</td> 
+      <td>Природа</td> 
+      <td>Українська мова</td> 
+      <td>9:00 - 9:45</td> 
+      <td class="break">9:45 - 9:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>2</td> 
+      <td>Математика</td> 
+      <td>Математика</td> 
+      <td>9:55 - 10:40</td> 
+      <td class="break">10:40 - 10:50 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>3</td> 
+      <td>Англійська мова</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>10:50 - 11:35</td> 
+      <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>4</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>Англійська мова</td> 
+      <td>11:55 - 12:40</td> 
+      <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>5</td> 
+      <td>Українська мова</td> 
+      <td>Читання</td> 
+      <td>13:00 - 13:45</td> 
+      <td class="break">13:45 - 13:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>6</td> 
+      <td>Technika</td> 
+      <td>Фізична культура/Музика</td> 
+      <td>13:55 - 14:40</td> 
+      <td></td> 
+    </tr> 
 
-        .current-lessons p {
-            font-size: 1.1rem;
-            margin: 12px 0;
-            color: #555;
-            padding: 8px;
-            border-radius: 5px;
-        }
+    <!-- Четвер --> 
+    <tr class="day-header thursday"> 
+      <td rowspan="9">Четвер</td> 
+      <td>1</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>Англійська мова</td> 
+      <td>9:00 - 9:45</td> 
+      <td class="break">9:45 - 9:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>2</td> 
+      <td>Математика</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>9:55 - 10:40</td> 
+      <td class="break">10:40 - 10:50 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>3</td> 
+      <td>Українська мова</td> 
+      <td>Математика</td> 
+      <td>10:50 - 11:35</td> 
+      <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>4</td> 
+      <td>Англійська мова</td> 
+      <td>Українська мова</td> 
+      <td>11:55 - 12:40</td> 
+      <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>5</td> 
+      <td>Читання</td> 
+      <td>Читання</td> 
+      <td>13:00 - 13:45</td> 
+      <td></td> 
+    </tr> 
 
-        .current-lesson-active {
-            background-color: #e8f5e9;
-            font-weight: bold;
-        }
+    <!-- П'ятниця --> 
+    <tr class="day-header friday"> 
+      <td rowspan="10">П'ятниця</td> 
+      <td>1</td> 
+      <td>Українська мова</td> 
+      <td>Математика</td> 
+      <td>9:00 - 9:45</td> 
+      <td class="break">9:45 - 9:55 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>2</td> 
+      <td>Англійська мова</td> 
+      <td>Читання</td> 
+      <td>9:55 - 10:40</td> 
+      <td class="break">10:40 - 10:50 (10 хв)</td> 
+    </tr> 
+    <tr> 
+      <td>3</td> 
+      <td>Математика</td> 
+      <td>Edukacja wczesnoszkolna</td> 
+      <td>10:50 - 11:35</td> 
+      <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>4</td> 
+      <td>Очікування автобусу</td> 
+      <td>Англійська мова</td> 
+      <td>11:55 - 12:20</td> 
+      <td class="lunch">12:20 - 12:40 (20 хв) (Обід 5-6 класи)</td> 
+    </tr> 
+    <tr> 
+      <td>5</td> 
+      <td>Шлях зі школи до басейну на автобусі</td> 
+      <td>Очікування автобуса</td> 
+      <td>12:20 - 12:45</td> 
+      <td></td> 
+    </tr> 
+    <tr> 
+      <td>6</td> 
+      <td>Фізичне виховання (басейн)</td> 
+      <td>Шлях зі школи до басейну на автобусі</td> 
+      <td>13:00 - 14:00</td> 
+      <td></td> 
+    </tr> 
+    <tr> 
+      <td>7</td> 
+      <td>Шлях з басейну до школи на автобусі</td> 
+      <td>Фізичне виховання (басейн)</td> 
+      <td>14:30 - 15:00</td> 
+      <td></td> 
+    </tr> 
+    <tr> 
+      <td>8</td> 
+      <td></td> 
+      <td>Шлях з басену до школи на автобусі</td> 
+      <td>15:30 - 16:00</td> 
+      <td></td> 
+    </tr> 
+  </tbody> 
+</table> 
 
-        .current-break-active {
-            background-color: #fff3e0;
-            font-weight: bold;
-        }
+<div class="footer"> 
+  <p>Розклад уроків для Данііла та Марка</p> 
+  <p id="current-date-time"></p> 
+</div> 
 
-        table {
-            width: 95%;
-            max-width: 1000px;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+<script> 
+const schedule = [ 
+  // Понеділок
+  { day: 'Понеділок', number: 1, daniel: 'Англійська мова', mark: 'Edukacja wczesnoszkolna', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+  { day: 'Понеділок', number: 2, daniel: 'Інформатика', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+  { day: 'Понеділок', number: 3, daniel: 'Edukacja wczesnoszkolna', mark: 'Інформатика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+  { day: 'Понеділок', number: 4, daniel: 'Edukacja wczesnoszkolna', mark: 'Англійська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+  { day: 'Понеділок', number: 5, daniel: 'Читання', mark: 'Українська мова', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+  { day: 'Понеділок', number: 6, daniel: 'Фізичне виховання/Музика', mark: '', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
+  { day: 'Понеділок', number: 7, daniel: '', mark: '', time: '14:50 - 15:30', break: '15:30 - 15:40 (10 хв)' },
+  { day: 'Понеділок', number: 8, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
 
-        th, td {
-            padding: 12px 10px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
+  // Вівторок
+  { day: 'Вівторок', number: 1, daniel: 'Читання', mark: 'Українська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+  { day: 'Вівторок', number: 2, daniel: 'Англійська мова', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+  { day: 'Вівторок', number: 3, daniel: 'Edukacja wczesnoszkolna', mark: 'Англійська мова', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+  { day: 'Вівторок', number: 4, daniel: 'Математика', mark: 'Edukacja wczesnoszkolna', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+  { day: 'Вівторок', number: 5, daniel: 'Українська мова', mark: 'Plastyka/Tehnika', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+  { day: 'Вівторок', number: 6, daniel: 'Plastyka', mark: 'Przyroda', time: '13:55 - 14:40', break: '' },
 
-        th {
-            background-color: #2c3e50;
-            color: #ffffff;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-        }
+  // Середа
+  { day: 'Середа', number: 1, daniel: 'Природа', mark: 'Українська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+  { day: 'Середа', number: 2, daniel: 'Математика', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+  { day: 'Середа', number: 3, daniel: 'Англійська мова', mark: 'Edukacja wczesnoszkolna', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+  { day: 'Середа', number: 4, daniel: 'Edukacja wczesnoszkolna', mark: 'Англійська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+  { day: 'Середа', number: 5, daniel: 'Українська мова', mark: 'Читання', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
+  { day: 'Середа', number: 6, daniel: 'Technika', mark: 'Фізична культура/Музика', time: '13:55 - 14:40', break: '' },
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+  // Четвер
+  { day: 'Четвер', number: 1, daniel: 'Edukacja wczesnoszkolna', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+  { day: 'Четвер', number: 2, daniel: 'Математика', mark: 'Edukacja wczesnoszkolna', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+  { day: 'Четвер', number: 3, daniel: 'Українська мова', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+  { day: 'Четвер', number: 4, daniel: 'Англійська мова', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
+  { day: 'Четвер', number: 5, daniel: 'Читання', mark: 'Читання', time: '13:00 - 13:45', break: '' },
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
+  // П'ятниця
+  { day: 'П\'ятниця', number: 1, daniel: 'Українська мова', mark: 'Математика', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
+  { day: 'П\'ятниця', number: 2, daniel: 'Англійська мова', mark: 'Читання', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
+  { day: 'П\'ятниця', number: 3, daniel: 'Математика', mark: 'Edukacja wczesnoszkolna', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
+  { day: 'П\'ятниця', number: 4, daniel: 'Очікування автобусу', mark: 'Англійська мова', time: '11:55 - 12:20', break: '12:20 - 12:40 (20 хв) (Обід 5-6 класи)' },
+  { day: 'П\'ятниця', number: 5, daniel: 'Шлях зі школи до басейну на автобусі', mark: 'Очікування автобуса', time: '12:20 - 12:45', break: '' },
+  { day: 'П\'ятниця', number: 6, daniel: 'Фізичне виховання (басейн)', mark: 'Шлях зі школи до басейну на автобусі', time: '13:00 - 14:00', break: '' },
+  { day: 'П\'ятниця', number: 7, daniel: 'Шлях з басейну до школи на автобусі', mark: 'Фізичне виховання (басейн)', time: '14:30 - 15:00', break: '' },
+  { day: 'П\'ятниця', number: 8, daniel: '', mark: 'Шлях з басену до школи на автобусі', time: '15:30 - 16:00', break: '' }
+];
 
-        .break {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
+function updateDateTime() {
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  document.getElementById('current-date-time').textContent = now.toLocaleDateString('uk-UA', options);
+}
 
-        .lunch {
-            background-color: #fff3e0;
-            color: #e65100;
-        }
-
-        .no-lesson {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-
-        .footer {
-            margin: 30px 0 15px;
-            font-size: 0.9rem;
-            color: #777;
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Стили для дней недели */
-        .day-header.monday {
-            background-color: #3498db !important;
-            color: white !important;
-        }
-        .day-header.tuesday {
-            background-color: #9b59b6 !important;
-            color: white !important;
-        }
-        .day-header.wednesday {
-            background-color: #2ecc71 !important;
-            color: white !important;
-        }
-        .day-header.thursday {
-            background-color: #e67e22 !important;
-            color: white !important;
-        }
-        .day-header.friday {
-            background-color: #e74c3c !important;
-            color: white !important;
-        }
-
-        .day-header td {
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-
-        /* Стили для сегодняшнего расписания */
-        .today-schedule {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 25px;
-            width: 90%;
-            max-width: 800px;
-        }
-
-        .today-schedule h2 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .today-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .today-table th, .today-table td {
-            padding: 10px 8px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        .today-table th {
-            background-color: #2c3e50;
-            color: #ffffff;
-        }
-
-        .today-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .highlight {
-            background-color: #fffacd !important;
-            font-weight: bold;
-        }
-
-        .current-break {
-            background-color: #e8f5e9 !important;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            h2 {
-                font-size: 1.4rem;
-            }
-            
-            th, td {
-                padding: 8px 6px;
-                font-size: 0.9rem;
-            }
-            
-            .current-lessons p {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 15px 10px;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            .current-lessons, .today-schedule {
-                width: 95%;
-                padding: 15px;
-            }
-            
-            th, td {
-                padding: 6px 4px;
-                font-size: 0.85rem;
-            }
-            
-            .day-header td {
-                font-size: 1em;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>Розклад уроків</h1>
-
-    <div class="current-lessons">
-        <h2>Поточні уроки</h2>
-        <p id="current-lesson-daniel">Данііл: </p>
-        <p id="current-lesson-mark">Марк: </p>
-    </div>
-
-    <!-- Блок с расписанием на сегодня -->
-    <div class="today-schedule">
-        <h2 id="today-title">Розклад на сьогодні</h2>
-        <table class="today-table" id="today-schedule">
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Урокі (Данііл)</th>
-                    <th>Урокі (Марк)</th>
-                    <th>Час</th>
-                    <th>Перерва</th>
-                </tr>
-            </thead>
-            <tbody id="today-lessons">
-                <!-- Здесь будет динамически добавляться расписание на сегодня -->
-            </tbody>
-        </table>
-    </div>
-
-    <table id="schedule">
-        <thead>
-            <tr>
-                <th>День</th>
-                <th>№</th>
-                <th>Урокі (Данііл)</th>
-                <th>Урокі (Марк)</th>
-                <th>Час</th>
-                <th>Перерва</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Понеділок -->
-            <tr class="day-header monday">
-                <td rowspan="9">Понеділок</td>
-                <td>1</td>
-                <td>Навчання грамоти</td>
-                <td>Читання</td>
-                <td>9:00 - 9:45</td>
-                <td class="break">9:45 - 9:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Навчання грамоти</td>
-                <td>Математика</td>
-                <td>9:55 - 10:40</td>
-                <td class="break">10:40 - 10:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Математика</td>
-                <td>Jezyk Polski</td>
-                <td>10:50 - 11:35</td>
-                <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Англійська мова</td>
-                <td>Українська мова</td>
-                <td>11:55 - 12:40</td>
-                <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Ударні</td>
-                <td>Англійська мова</td>
-                <td>13:00 - 13:45</td>
-                <td class="break">13:45 - 13:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Теорія музики</td>
-                <td>Теорія музики</td>
-                <td>13:55 - 14:40</td>
-                <td class="break">14:40 - 14:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Театр</td>
-                <td>Театр</td>
-                <td>14:50 - 15:35</td>
-                <td class="break">15:35 - 15:45 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>Театр ансамбль</td>
-                <td>Театр ансамбль</td>
-                <td>15:45 - 16:30</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Тхэквандо</td>
-                <td>Тхэквандо</td>
-                <td>17:00 - 18:00</td>
-                <td></td>
-            </tr>
-            
-            <!-- Вівторок -->
-            <tr class="day-header tuesday">
-                <td rowspan="7">Вівторок</td>
-                <td>1</td>
-                <td>Навчання грамоти</td>
-                <td>Англійська мова</td>
-                <td>9:00 - 9:45</td>
-                <td class="break">9:45 - 9:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Навчання грамоти</td>
-                <td>Англійська мова</td>
-                <td>9:55 - 10:40</td>
-                <td class="break">10:40 - 10:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Математика</td>
-                <td>Математика</td>
-                <td>10:50 - 11:35</td>
-                <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Przyroda</td>
-                <td>Українська мова</td>
-                <td>11:55 - 12:40</td>
-                <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Plastyka</td>
-                <td>Plastyka</td>
-                <td>13:00 - 13:45</td>
-                <td class="break">13:45 - 13:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Українська світлиця</td>
-                <td>Я досліджую світ</td>
-                <td>13:55 - 14:40</td>
-                <td class="break">14:40 - 14:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td></td>
-                <td>Гітара</td>
-                <td>14:50 - 15:35</td>
-                <td class="break">15:35 - 15:45 (10 хв)</td>
-            </tr>
-            
-            <!-- Середа -->
-            <tr class="day-header wednesday">
-                <td rowspan="9">Середа</td>
-                <td>1</td>
-                <td>Навчання грамоти</td>
-                <td>Англійська мова</td>
-                <td>9:00 - 9:45</td>
-                <td class="break">9:45 - 9:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Математика</td>
-                <td>Jezyk Polski</td>
-                <td>9:55 - 10:40</td>
-                <td class="break">10:40 - 10:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Jezyk Polski</td>
-                <td>Математика</td>
-                <td>10:50 - 11:35</td>
-                <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Англійська мова</td>
-                <td>Інформатика</td>
-                <td>11:55 - 12:40</td>
-                <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Англійська мова</td>
-                <td>Читання</td>
-                <td>13:00 - 13:45</td>
-                <td class="break">13:45 - 13:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Ударні</td>
-                <td></td>
-                <td>13:55 - 14:40</td>
-                <td class="break">14:40 - 14:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Театр</td>
-                <td>Театр</td>
-                <td>14:50 - 15:35</td>
-                <td class="break">15:35 - 15:45 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>Театр</td>
-                <td>Театр</td>
-                <td>15:45 - 16:30</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Тхэквандо</td>
-                <td>Тхэквандо</td>
-                <td>17:00 - 18:00</td>
-                <td></td>
-            </tr>
-            
-            <!-- Четвер -->
-            <tr class="day-header thursday">
-                <td rowspan="7">Четвер</td>
-                <td>1</td>
-                <td>Навчання грамоти</td>
-                <td>Математика</td>
-                <td>9:00 - 9:45</td>
-                <td class="break">9:45 - 9:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Навчання грамоти</td>
-                <td>Jezyk Polski</td>
-                <td>9:55 - 10:40</td>
-                <td class="break">10:40 - 10:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Jezyk Polski</td>
-                <td>Українська мова</td>
-                <td>10:50 - 11:35</td>
-                <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Математика</td>
-                <td>Я досліджую світ</td>
-                <td>11:55 - 12:40</td>
-                <td class="lunch">12:40 - 13:00 (20 хв) (Обід 5-6 класи)</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Plastyka</td>
-                <td>Edukacja wczesnoszkolna</td>
-                <td>13:00 - 13:45</td>
-                <td class="break">13:45 - 13:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Англійська мова</td>
-                <td>Польська мова (факультатив)</td>
-                <td>13:55 - 14:40</td>
-                <td class="break">14:40 - 14:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td></td>
-                <td>Гітара</td>
-                <td>14:50 - 15:35</td>
-                <td class="break">15:35 - 15:45 (10 хв)</td>
-            </tr>
-            
-            <!-- П'ятниця -->
-            <tr class="day-header friday">
-                <td rowspan="7">П'ятниця</td>
-                <td>1</td>
-                <td>Я досліджую світ</td>
-                <td>Українська мова</td>
-                <td>9:00 - 9:45</td>
-                <td class="break">9:45 - 9:55 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Jezyk Polski</td>
-                <td>Математика</td>
-                <td>9:55 - 10:40</td>
-                <td class="break">10:40 - 10:50 (10 хв)</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Edukacja wczesnoszkolna</td>
-                <td>Читання</td>
-                <td>10:50 - 11:35</td>
-                <td class="lunch">11:35 - 11:55 (20 хв) (Обід 1-4 класи)</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Очікування автобусу</td>
-                <td>Очікування автобусу</td>
-                <td>11:55 - 12:20</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Wyhowanie фізичне (басейн)</td>
-                <td>Wyhowanie фізичне (басейн)</td>
-                <td>13:00 - 14:00</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Шлях з басейну до школи на автобусі</td>
-                <td>Шлях з басейну до школи на автобусі</td>
-                <td>14:30 - 14:55</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Тхэквандо</td>
-                <td>Тхэквандо</td>
-                <td>17:00 - 18:00</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="footer">
-        <p>Розклад уроків для Данііла та Марка</p>
-        <p id="current-date-time"></p>
-    </div>
-
-    <script>
-        const schedule = [
-            // Понеділок
-            { day: 'Понеділок', number: 1, daniel: 'Навчання грамоти', mark: 'Читання', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-            { day: 'Понеділок', number: 2, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-            { day: 'Понеділок', number: 3, daniel: 'Математика', mark: 'Jezyk Polski', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-            { day: 'Понеділок', number: 4, daniel: 'Англійська мова', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-            { day: 'Понеділок', number: 5, daniel: 'Ударні', mark: 'Англійська мова', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-            { day: 'Понеділок', number: 6, daniel: 'Теорія музики', mark: 'Теорія музики', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-            { day: 'Понеділок', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-            { day: 'Понеділок', number: 8, daniel: 'Театр ансамбль', mark: 'Театр ансамбль', time: '15:45 - 16:30', break: '' },
-            { day: 'Понеділок', number: 9, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
-            
-            // Вівторок
-            { day: 'Вівторок', number: 1, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-            { day: 'Вівторок', number: 2, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-            { day: 'Вівторок', number: 3, daniel: 'Математика', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-            { day: 'Вівторок', number: 4, daniel: 'Przyroda', mark: 'Українська мова', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-            { day: 'Вівторок', number: 5, daniel: 'Plastyka', mark: 'Plastyka', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-            { day: 'Вівторок', number: 6, daniel: 'Українська світлиця', mark: 'Я досліджую світ', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-            { day: 'Вівторок', number: 7, daniel: '', mark: 'Гітара', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-            
-            // Середа
-            { day: 'Середа', number: 1, daniel: 'Навчання грамоти', mark: 'Англійська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-            { day: 'Середа', number: 2, daniel: 'Математика', mark: 'Jezyk Polski', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-            { day: 'Середа', number: 3, daniel: 'Jezyk Polski', mark: 'Математика', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-            { day: 'Середа', number: 4, daniel: 'Англійська мова', mark: 'Інформатика', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-            { day: 'Середа', number: 5, daniel: 'Англійська мова', mark: 'Читання', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-            { day: 'Середа', number: 6, daniel: 'Ударні', mark: '', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-            { day: 'Середа', number: 7, daniel: 'Театр', mark: 'Театр', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-            { day: 'Середа', number: 8, daniel: 'Театр', mark: 'Театр', time: '15:45 - 16:30', break: '' },
-            { day: 'Середа', number: 9, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' },
-            
-            // Четвер
-            { day: 'Четвер', number: 1, daniel: 'Навчання грамоти', mark: 'Математика', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-            { day: 'Четвер', number: 2, daniel: 'Навчання грамоти', mark: 'Jezyk Polski', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-            { day: 'Четвер', number: 3, daniel: 'Jezyk Polski', mark: 'Українська мова', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-            { day: 'Четвер', number: 4, daniel: 'Математика', mark: 'Я досліджую світ', time: '11:55 - 12:40', break: '12:40 - 13:00 (20 хв) (Обід 5-6 класи)' },
-            { day: 'Четвер', number: 5, daniel: 'Plastyka', mark: 'Edukacja wczesnoszkolna', time: '13:00 - 13:45', break: '13:45 - 13:55 (10 хв)' },
-            { day: 'Четвер', number: 6, daniel: 'Англійська мова', mark: 'Польська мова (факультатив)', time: '13:55 - 14:40', break: '14:40 - 14:50 (10 хв)' },
-            { day: 'Четвер', number: 7, daniel: '', mark: 'Гітара', time: '14:50 - 15:35', break: '15:35 - 15:45 (10 хв)' },
-            
-            // П'ятниця
-            { day: 'П\'ятниця', number: 1, daniel: 'Я досліджую світ', mark: 'Українська мова', time: '9:00 - 9:45', break: '9:45 - 9:55 (10 хв)' },
-            { day: 'П\'ятниця', number: 2, daniel: 'Jezyk Polski', mark: 'Математика', time: '9:55 - 10:40', break: '10:40 - 10:50 (10 хв)' },
-            { day: 'П\'ятниця', number: 3, daniel: 'Edukacja wczesnoszkolna', mark: 'Читання', time: '10:50 - 11:35', break: '11:35 - 11:55 (20 хв) (Обід 1-4 класи)' },
-            { day: 'П\'ятниця', number: 4, daniel: 'Очікування автобусу', mark: 'Очікування автобусу', time: '11:55 - 12:20', break: '' },
-            { day: 'П\'ятниця', number: 5, daniel: 'Wyhowanie фізичне (басейн)', mark: 'Wyhowanie фізичне (басейн)', time: '13:00 - 14:00', break: '' },
-            { day: 'П\'ятниця', number: 6, daniel: 'Шлях з басейну до школи на автобусі', mark: 'Шлях з басейну до школи на автобусі', time: '14:30 - 14:55', break: '' },
-            { day: 'П\'ятниця', number: 7, daniel: 'Тхэквандо', mark: 'Тхэквандо', time: '17:00 - 18:00', break: '' }
-        ];
-
-        function updateDateTime() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            document.getElementById('current-date-time').textContent = now.toLocaleDateString('uk-UA', options);
-        }
-
-        function getCurrentLesson() {
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-            const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
-            const currentDay = days[now.getDay()];
-
-            let danielLesson = 'Немає уроків';
-            let markLesson = 'Немає уроків';
-            let danielTime = '';
-            let markTime = '';
-            let currentBreak = null;
-            let isBreakNow = false;
-
-            document.getElementById('today-title').textContent = `Розклад на ${currentDay}`;
-            const todayLessons = document.getElementById('today-lessons');
-            todayLessons.innerHTML = '';
-
-            schedule.forEach(lesson => {
-                if (lesson.day === currentDay) {
-                    const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
-                    const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
-                    const startTime = startHour * 60 + startMinute;
-                    const endTime = endHour * 60 + endMinute;
-                    const isCurrent = currentTime >= startTime && currentTime <= endTime;
-                    
-                    let isBreak = false;
-                    if (lesson.break) {
-                        const breakParts = lesson.break.split(' - ')[0].split(':');
-                        const breakStartHour = parseInt(breakParts[0]);
-                        const breakStartMinute = parseInt(breakParts[1]);
-                        const breakStartTime = breakStartHour * 60 + breakStartMinute;
-                        
-                        const breakEndParts = lesson.break.split(' - ')[1].split(' ')[0].split(':');
-                        const breakEndHour = parseInt(breakEndParts[0]);
-                        const breakEndMinute = parseInt(breakEndParts[1]);
-                        const breakEndTime = breakEndHour * 60 + breakEndMinute;
-                        
-                        if (currentTime >= breakStartTime && currentTime <= breakEndTime) {
-                            isBreak = true;
-                            isBreakNow = true;
-                            currentBreak = lesson.break;
-                        }
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.number}</td>
-                        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.daniel || '-'}</td>
-                        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.mark || '-'}</td>
-                        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.time}</td>
-                        <td${lesson.break ? ' class="break"' : ''}>${lesson.break || '-'}</td>
-                    `;
-                    todayLessons.appendChild(row);
-
-                    if (isCurrent) {
-                        danielLesson = lesson.daniel || 'Немає уроку';
-                        markLesson = lesson.mark || 'Немає уроку';
-                        danielTime = lesson.time;
-                        markTime = lesson.time;
-                    }
-                }
-            });
-
-            const danielElement = document.getElementById('current-lesson-daniel');
-            const markElement = document.getElementById('current-lesson-mark');
-
-            if (isBreakNow) {
-                danielLesson = `Перерва: ${currentBreak}`;
-                markLesson = `Перерва: ${currentBreak}`;
-                danielElement.className = 'current-break-active';
-                markElement.className = 'current-break-active';
-            } else if (danielLesson !== 'Немає уроків') {
-                danielElement.className = 'current-lesson-active';
-                markElement.className = 'current-lesson-active';
-            } else {
-                danielElement.className = '';
-                markElement.className = '';
-            }
-
-            danielElement.textContent = `Данііл: ${danielLesson}${danielTime ? ` (${danielTime})` : ''}`;
-            markElement.textContent = `Марк: ${markLesson}${markTime ? ` (${markTime})` : ''}`;
-        }
-
-        function highlightCurrentDay() {
-            const now = new Date();
-            const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
-            const currentDay = days[now.getDay()];
-            
-            document.querySelectorAll('.day-header').forEach(header => {
-                if (header.querySelector('td').textContent === currentDay) {
-                    header.style.borderLeft = '4px solid #2c3e50';
-                    header.style.borderRight = '4px solid #2c3e50';
-                    header.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-                } else {
-                    header.style.borderLeft = 'none';
-                    header.style.borderRight = 'none';
-                    header.style.boxShadow = 'none';
-                }
-            });
-        }
-
-        // Инициализация
-        updateDateTime();
-        getCurrentLesson();
-        highlightCurrentDay();
+function getCurrentLesson() {
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+  const currentDay = days[now.getDay()];
+  
+  let danielLesson = 'Немає уроків';
+  let markLesson = 'Немає уроків';
+  let danielTime = '';
+  let markTime = '';
+  let currentBreak = null;
+  let isBreakNow = false;
+  
+  document.getElementById('today-title').textContent = `Розклад на ${currentDay}`;
+  
+  const todayLessons = document.getElementById('today-lessons');
+  todayLessons.innerHTML = '';
+  
+  schedule.forEach(lesson => {
+    if (lesson.day === currentDay) {
+      const [startHour, startMinute] = lesson.time.split(' - ')[0].split(':').map(Number);
+      const [endHour, endMinute] = lesson.time.split(' - ')[1].split(':').map(Number);
+      const startTime = startHour * 60 + startMinute;
+      const endTime = endHour * 60 + endMinute;
+      const isCurrent = currentTime >= startTime && currentTime <= endTime;
+      
+      let isBreak = false;
+      if (lesson.break) {
+        const breakParts = lesson.break.split(' - ')[0].split(':');
+        const breakStartHour = parseInt(breakParts[0]);
+        const breakStartMinute = parseInt(breakParts[1]);
+        const breakStartTime = breakStartHour * 60 + breakStartMinute;
         
-        // Обновление каждую минуту
-        setInterval(() => {
-            updateDateTime();
-            getCurrentLesson();
-        }, 60000);
+        const breakEndParts = lesson.break.split(' - ')[1].split(' ')[0].split(':');
+        const breakEndHour = parseInt(breakEndParts[0]);
+        const breakEndMinute = parseInt(breakEndParts[1]);
+        const breakEndTime = breakEndHour * 60 + breakEndMinute;
+        
+        if (currentTime >= breakStartTime && currentTime <= breakEndTime) {
+          isBreak = true;
+          isBreakNow = true;
+          currentBreak = lesson.break;
+        }
+      }
+      
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.number}</td>
+        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.daniel || '-'}</td>
+        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.mark || '-'}</td>
+        <td${isCurrent ? ' class="highlight"' : isBreak ? ' class="current-break"' : ''}>${lesson.time}</td>
+        <td${lesson.break ? ' class="break"' : ''}>${lesson.break || '-'}</td>
+      `;
+      todayLessons.appendChild(row);
+      
+      if (isCurrent) {
+        danielLesson = lesson.daniel || 'Немає уроку';
+        markLesson = lesson.mark || 'Немає уроку';
+        danielTime = lesson.time;
+        markTime = lesson.time;
+      }
+    }
+  });
+  
+  const danielElement = document.getElementById('current-lesson-daniel');
+  const markElement = document.getElementById('current-lesson-mark');
+  
+  if (isBreakNow) {
+    danielLesson = `Перерва: ${currentBreak}`;
+    markLesson = `Перерва: ${currentBreak}`;
+    danielElement.className = 'current-break-active';
+    markElement.className = 'current-break-active';
+  } else if (danielLesson !== 'Немає уроків') {
+    danielElement.className = 'current-lesson-active';
+    markElement.className = 'current-lesson-active';
+  } else {
+    danielElement.className = '';
+    markElement.className = '';
+  }
+  
+  danielElement.textContent = `Данііл: ${danielLesson}${danielTime ? (${danielTime}) : ''}`;
+  markElement.textContent = `Марк: ${markLesson}${markTime ? (${markTime}) : ''}`;
+}
 
-        // Обновление выделения дня при изменении даты
-        setInterval(highlightCurrentDay, 3600000);
-    </script>
-</body>
+function highlightCurrentDay() {
+  const now = new Date();
+  const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+  const currentDay = days[now.getDay()];
+  
+  document.querySelectorAll('.day-header').forEach(header => {
+    if (header.querySelector('td').textContent === currentDay) {
+      header.style.borderLeft = '4px solid #2c3e50';
+      header.style.borderRight = '4px solid #2c3e50';
+      header.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+    } else {
+      header.style.borderLeft = 'none';
+      header.style.borderRight = 'none';
+      header.style.boxShadow = 'none';
+    }
+  });
+}
+
+// Инициализация
+updateDateTime();
+getCurrentLesson();
+highlightCurrentDay();
+
+// Обновление каждую минуту
+setInterval(() => {
+  updateDateTime();
+  getCurrentLesson();
+}, 60000);
+
+// Обновление выделения дня при изменении даты
+setInterval(highlightCurrentDay, 3600000);
+</script> 
+</body> 
 </html>
